@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+     <header class="main-header">
+        <div class="container">
+            <h1>
+                <i class="fas fa-users"></i>
+            User Management System
+            </h1>
+          
+        </div>
+    </header>
+
+
+    <div class="container">
+        
+          <div class="statistics">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div class="stat-info">
+                    <h3 id="totalUsers">0</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+             <div class="stat-card">
+                <i class="fas fa-user-plus"></i>
+                <div class="stat-info">
+                    <h3 id="todayAdded">0</h3>
+                    <p>Today Added</p>
+                </div>
+            </div>
+        <div class="stat-card">
+                <i class="fas fa-briefcase"></i>
+                <div class="stat-info">
+                    <h3 id="totalSpecialties">0</h3>
+                    <p>Specialties</p>
+                </div>
+            </div>
+        </div>
+
+ <div class="controls-section">
+            
+            <button class="btn btn-primary" id="addUserBtn">
+                <i class="fas fa-user-plus"></i>
+                    ADD NEW USER
+            </button>
+
+            <div class="search-filter">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput"  placeholder="The Name Whisper" />
+                   </div>
+
+                <div class="filter-box">
+                    <i class="fas fa-filter"></i>
+                    <select id="filterSpecialty">
+                        <option value="">Total Specialty</option>
+                        <option value="webdeveloper">Web Developer</option>
+                        <option value="back">Back-End</option>
+                        <option value="front">Front-End</option>
+                        <option value="knowhtml"> FullStack</option>
+                        <option value="softwareengineer">   Software Engineer</option>
+                        <option value="else">else</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="nousersmessage hidden" id="noUsersMessage">
+            <i class="fas fa-user-slash"></i>
+            <h3>There is no user</h3>
+            <p> You Can Add user</p>
+        </div>
+
+        <div class="noresultsmessage hidden" id="noResultsMessage">
+            <i class="fas fa-search-minus"></i>
+            <h3>There is no results</h3>
+            <p>There Is no user by this name</p>
+        </div>
+
+        <div class="table-container" id="tableContainer">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Age</th>
+                        <th>Specialty</th>
+                        <th>Filter</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal hidden" id="userModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New User</h2>
+                <button class="close-btn" id="closeModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="userForm">
+                    
+                    <div class="form-group">
+                        <label for="userName">
+                            <i class="fas fa-user"></i>
+                                Full Name*
+                        </label>
+                        <input 
+                            type="text" 
+                            id="userName" 
+                            placeholder="Enter Full Name"required/>
+                        <span class="error-message" id="nameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userEmail">
+                            <i class="fas fa-envelope"></i>
+                                Email*
+                        </label>
+                        <input  type="email" id="userEmail"  placeholder="example@email.com" required/>
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userAge">
+                            <i class="as fa-calendar"></i>
+                                AGE*
+                        </label>
+                        <input type="number" id="userAge" placeholder="Enter Your Age" min="10"max="100" required/>
+                        <span class="error-message" id="ageError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userSpecialty">
+                            <i class="fas fa-briefcase"></i>
+                            Specialty
+                        </label>
+                        <select id="userSpecialty" required>
+                            <option value="">Select your Specialty</option>
+                            <option value="webdeveloper">Web Developer   </option>
+                            <option value="back">Back-End</option>
+                            <option value="front">Front-End</option>
+                            <option value="knowhtml">FullStack</option>
+                            <option value="softwareengineer">Software Engineer</option>
+                            <option value="else">else</option>
+                        </select>
+                        <span class="error-message" id="specialtyError"></span>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-success" id="saveBtn">
+                            <i class="fas fa-save"></i>
+                            Submit
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal hidden" id="deleteModal">
+        <div class="modal-overlay" id="deleteModalOverlay"></div>
+        <div class="modal-content delete-modal-content">
+            
+            <div class="delete-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+
+            <h2>Confirm deletion</h2>
+            <p>Are you sure about deleting it?<strong id="deleteUserName"></strong>؟</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i>
+                    Yes, delete
+                </button>
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="toast hidde" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">The operation was completed successfully</span>
+    </div>
+
+    <script src="main.js"></script>
+
+</body>
+</html>
+
