@@ -416,4 +416,179 @@ function init() {
 
 init();
 
+const scrollTopBtn = document.getElementById('scrollTop');
+
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+        scrollTopBtn.classList.add('show');
+    } else {
+        scrollTopBtn.classList.remove('show');
+    }
+});
+
+scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+function createConfetti() {
+    const colors = ['#ee7752', '#e73c7e', '#23a6d5', '#23d5ab'];
+    
+    for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 0.3 + 's';
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 3000);
+        }, i * 30);
+    }
+}
+
+const originalShowToast = showToast;
+showToast = function(message) {
+    originalShowToast(message);
+    createConfetti();
+};
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn')) {
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.left = e.offsetX + 'px';
+        ripple.style.top = e.offsetY + 'px';
+        e.target.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 600);
+    }
+});
+
+const themeToggle = document.getElementById('themeToggle');
+let currentTheme = 0;
+const themes = [
+    'linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)',
+    'linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c)',
+    'linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #4ca1af)',
+    'linear-gradient(-45deg, #fc4a1a, #f7b733, #4facfe, #00f2fe)',
+    'linear-gradient(-45deg, #8E2DE2, #4A00E0, #DA22FF, #9733EE)'
+];
+
+themeToggle.addEventListener('click', () => {
+    currentTheme = (currentTheme + 1) % themes.length;
+    document.body.style.background = themes[currentTheme];
+    document.body.style.backgroundSize = '400% 400%';
+    document.body.style.animation = 'gradientBG 15s ease infinite';
+    
+    themeToggle.style.transform = 'rotate(360deg) scale(1.2)';
+    setTimeout(() => {
+        themeToggle.style.transform = 'rotate(0deg) scale(1)';
+    }, 300);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('page-transition');
+});
+
+document.querySelectorAll('.stat-card').forEach(card => {
+    card.classList.add('shine-effect');
+});
+
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        openAddUserModal();
+    }
+    
+
+    if (e.key === 'Escape') {
+        closeModal();
+        closeDeleteModal();
+    }
+    
+
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        searchInput.focus();
+    }
+});
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '0';
+            entry.target.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+                entry.target.style.transition = 'all 0.5s ease';
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateX(0)';
+            }, 100);
+        }
+    });
+});
+
+
+const observeTableRows = () => {
+    document.querySelectorAll('.users-table tbody tr').forEach(row => {
+        observer.observe(row);
+    });
+};
+
+
+const originalDisplayUsers = displayUsers;
+displayUsers = function(usersToDisplay) {
+    originalDisplayUsers(usersToDisplay);
+    setTimeout(observeTableRows, 100);
+};
+
+usersTableBody.addEventListener('dblclick', (e) => {
+    const row = e.target.closest('tr');
+    if (row) {
+        const editBtn = row.querySelector('.btn-edit');
+        if (editBtn) editBtn.click();
+    }
+});
+
+
+const formFields = [userName, userEmail, userAge, userSpecialty];
+formFields.forEach(field => {
+    field.addEventListener('input', () => {
+        if (!currentEditId) {
+            localStorage.setItem('draft_' + field.id, field.value);
+        }
+    });
+});
+
+const originalOpenModal = openAddUserModal;
+openAddUserModal = function() {
+    originalOpenModal();
+    
+ 
+    formFields.forEach(field => {
+        const draft = localStorage.getItem('draft_' + field.id);
+        if (draft) field.value = draft;
+    });
+};
+
+
+const originalHandleFormSubmit = handleFormSubmit;
+handleFormSubmit = function(e) {
+    originalHandleFormSubmit(e);
+    
+
+    formFields.forEach(field => {
+        localStorage.removeItem('draft_' + field.id);
+    });
+};
+
+console.log(' Enhanced features loaded!');
+console.log(' Keyboard shortcuts:');
+console.log('   Ctrl/Cmd + N: Add new user');
+console.log('   Ctrl/Cmd + F: Focus search');
+console.log('   Escape: Close modal');
+console.log('   Double-click row: Edit user');
 
