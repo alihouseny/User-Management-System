@@ -1,233 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management System</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UMS — User Management System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
-    
-     <div class="corner-decoration top-left"></div>
-     <div class="corner-decoration bottom-right"></div>
-     
 
-     <div class="scroll-top" id="scrollTop">
-         <i class="fas fa-arrow-up"></i>
-     </div>
-     
-     <header class="main-header">
-        <div class="container">
-            <h1>
-                <i class="fas fa-users"></i>
-            User Management System
-            </h1>
-          
-        </div>
-    </header>
+  <!-- Background Canvas -->
+  <canvas id="bgCanvas"></canvas>
 
-
+  <!-- ── HEADER ──────────────────────────────────── -->
+  <header class="main-header">
     <div class="container">
-        
-          <div class="statistics">
-            <div class="stat-card">
-                <i class="fas fa-users"></i>
-                <div class="stat-info">
-                    <h3 id="totalUsers">0</h3>
-                    <p>Total Users</p>
-                </div>
-            </div>
-             <div class="stat-card">
-                <i class="fas fa-user-plus"></i>
-                <div class="stat-info">
-                    <h3 id="todayAdded">0</h3>
-                    <p>Today Added</p>
-                </div>
-            </div>
+      <div class="header-inner">
+
+        <div class="header-logo">
+          <div class="logo-icon"><i class="fas fa-users-gear"></i></div>
+          <div>
+            <h1>User Management</h1>
+            <div class="subtitle">Dashboard v2.0</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-ghost btn-icon" id="shortcutsBtn" title="Keyboard Shortcuts (?)">
+            <i class="fas fa-keyboard"></i>
+          </button>
+          <button class="btn btn-ghost btn-icon" id="themeToggle" title="Toggle Theme">
+            <i class="fas fa-sun"></i>
+          </button>
+          <button class="btn btn-ghost" id="exportCsvBtn" title="Export CSV (Ctrl+E)">
+            <i class="fas fa-download"></i> Export
+          </button>
+          <button class="btn btn-ghost" id="importCsvBtn" title="Import CSV">
+            <i class="fas fa-upload"></i> Import
+          </button>
+          <input type="file" id="importFileInput" accept=".csv" class="hidden" />
+          <button class="btn btn-primary" id="addUserBtn" title="Add User (Ctrl+N)">
+            <i class="fas fa-user-plus"></i> Add User
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN ─────────────────────────────────────── -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Stat Cards -->
+      <div class="statistics">
         <div class="stat-card">
-                <i class="fas fa-briefcase"></i>
-                <div class="stat-info">
-                    <h3 id="totalSpecialties">0</h3>
-                    <p>Specialties</p>
-                </div>
-            </div>
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-info">
+            <h3 id="totalUsers">0</h3>
+            <p>Total Users</p>
+          </div>
         </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-circle-check"></i></div>
+          <div class="stat-info">
+            <h3 id="activeUsers">0</h3>
+            <p>Active Users</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+          <div class="stat-info">
+            <h3 id="totalSpecialties">0</h3>
+            <p>Specialties</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+          <div class="stat-info">
+            <h3 id="todayAdded">0</h3>
+            <p>Added Today</p>
+          </div>
+        </div>
+      </div>
 
- <div class="controls-section">
-            
-            <button class="btn btn-primary" id="addUserBtn">
-                <i class="fas fa-user-plus"></i>
-                    ADD NEW USER
+      <!-- Controls -->
+      <div class="controls-section">
+        <div class="controls-left">
+
+          <!-- Search -->
+          <div class="input-group">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search users…" autocomplete="off" />
+            <button class="clear-icon" id="searchClear" title="Clear search">
+              <i class="fas fa-xmark"></i>
             </button>
+          </div>
 
-            <div class="search-filter">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput"  placeholder="The Name Whisper" />
-                   </div>
+          <!-- Specialty filter -->
+          <div class="input-group">
+            <i class="fas fa-filter"></i>
+            <select id="filterSpecialty">
+              <option value="">All Specialties</option>
+              <option value="webdeveloper">Web Developer</option>
+              <option value="back">Back-End</option>
+              <option value="front">Front-End</option>
+              <option value="knowhtml">FullStack</option>
+              <option value="softwareengineer">Software Engineer</option>
+              <option value="else">Other</option>
+            </select>
+          </div>
 
-                <div class="filter-box">
-                    <i class="fas fa-filter"></i>
-                    <select id="filterSpecialty">
-                        <option value="">Total Specialty</option>
-                        <option value="webdeveloper">Web Developer</option>
-                        <option value="back">Back-End</option>
-                        <option value="front">Front-End</option>
-                        <option value="knowhtml"> FullStack</option>
-                        <option value="softwareengineer">   Software Engineer</option>
-                        <option value="else">else</option>
-                    </select>
-                </div>
-            </div>
+          <!-- Status filter -->
+          <div class="input-group">
+            <i class="fas fa-circle-half-stroke"></i>
+            <select id="filterStatus">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
         </div>
 
-        <div class="nousersmessage hidden" id="noUsersMessage">
-            <i class="fas fa-user-slash"></i>
-            <h3>There is no user</h3>
-            <p> You Can Add user</p>
-        </div>
+        <div class="controls-right">
 
-        <div class="noresultsmessage hidden" id="noResultsMessage">
-            <i class="fas fa-search-minus"></i>
-            <h3>There is no results</h3>
-            <p>There Is no user by this name</p>
-        </div>
+          <!-- Sort -->
+          <div class="sort-group">
+            <select id="sortFieldSel">
+              <option value="name">Sort: Name</option>
+              <option value="age">Sort: Age</option>
+              <option value="specialty">Sort: Specialty</option>
+              <option value="createdAt">Sort: Date</option>
+            </select>
+            <button class="btn btn-ghost btn-icon" id="sortOrderBtn" title="Toggle sort order">
+              <i class="fas fa-arrow-up-a-z"></i>
+            </button>
+          </div>
 
-        <div class="table-container" id="tableContainer">
+          <div class="view-switcher">
+            <button class="view-btn active" data-view="table" title="Table View (1)">
+              <i class="fas fa-table-list"></i>
+            </button>
+            <button class="view-btn" data-view="card" title="Card View (2)">
+              <i class="fas fa-grip"></i>
+            </button>
+            <button class="view-btn" data-view="kanban" title="Kanban View (3)">
+              <i class="fas fa-columns"></i>
+            </button>
+          </div>
+
+          <button class="btn btn-danger hidden" id="bulkDeleteBtn">
+            <i class="fas fa-trash"></i>
+          </button>
+
+        </div>
+      </div>
+
+      <div class="empty-state hidden" id="noUsersMessage">
+        <i class="fas fa-users-slash"></i>
+        <h3>No users yet</h3>
+        <p>Click <strong>Add User</strong> to get started</p>
+      </div>
+
+      <div class="empty-state hidden" id="noResultsMessage">
+        <i class="fas fa-magnifying-glass-minus"></i>
+        <h3>No results found</h3>
+        <p>Try adjusting your search or filters</p>
+      </div>
+
+      <div class="sidebar">
+
+        <div class="table-area">
+          <!-- Table view -->
+          <div class="table-container hidden" id="tableContainer">
             <table class="users-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Age</th>
-                        <th>Specialty</th>
-                        <th>Filter</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody"></tbody>
+              <thead>
+                <tr>
+                  <th style="width:36px">
+                    <input type="checkbox" id="selectAllCheckbox" title="Select all" />
+                  </th>
+                  <th style="width:36px">#</th>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Age</th>
+                  <th>Specialty</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
             </table>
+          </div>
+
+          <div class="card-container hidden" id="cardContainer"></div>
+
+          <div class="kanban-container hidden" id="kanbanContainer"></div>
+
+          <div class="pagination" id="pagination"></div>
         </div>
 
+        <!-- Activity log sidebar -->
+        <aside class="activity-panel">
+          <div class="panel-header">
+            <i class="fas fa-clock-rotate-left"></i> Activity Log
+          </div>
+          <ul class="activity-list" id="activityList">
+            <li class="activity-empty">No recent activity</li>
+          </ul>
+        </aside>
+
+      </div>
+
     </div>
+  </main>
 
-    <div class="modal hidden" id="userModal">
-        <div class="modal-overlay" id="modalOverlay"></div>
-        <div class="modal-content">
-            
-            <div class="modal-header">
-                <h2 id="modalTitle">Add New User</h2>
-                <button class="close-btn" id="closeModalBtn">
-                    <i class="fas fa-times"></i>
-                </button>
+  <!-- ── ADD / EDIT MODAL ──────────────────────────── -->
+  <div class="modal hidden" id="userModal">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h2 id="modalTitle">Add New User</h2>
+        <button class="close-btn" id="closeModalBtn"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="userForm" novalidate>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="userName"><i class="fas fa-user"></i> Full Name *</label>
+              <input type="text" id="userName" placeholder="e.g. John Doe" autocomplete="name" maxlength="60" />
+              <span class="name-strength" id="nameStrength"></span>
+              <span class="error-message" id="nameError"></span>
             </div>
-
-            <div class="modal-body">
-                <form id="userForm">
-                    
-                    <div class="form-group">
-                        <label for="userName">
-                            <i class="fas fa-user"></i>
-                                Full Name*
-                        </label>
-                        <input 
-                            type="text" 
-                            id="userName" 
-                            placeholder="Enter Full Name"required/>
-                        <span class="error-message" id="nameError"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="userEmail">
-                            <i class="fas fa-envelope"></i>
-                                Email*
-                        </label>
-                        <input  type="email" id="userEmail"  placeholder="example@email.com" required/>
-                        <span class="error-message" id="emailError"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="userAge">
-                            <i class="as fa-calendar"></i>
-                                AGE*
-                        </label>
-                        <input type="number" id="userAge" placeholder="Enter Your Age" min="10"max="120" required/>
-                        <span class="error-message" id="ageError"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="userSpecialty">
-                            <i class="fas fa-briefcase"></i>
-                            Specialty
-                        </label>
-                        <select id="userSpecialty" required>
-                            <option value="">Select your Specialty</option>
-                            <option value="webdeveloper">Web Developer   </option>
-                            <option value="back">Back-End</option>
-                            <option value="front">Front-End</option>
-                            <option value="knowhtml">FullStack</option>
-                            <option value="softwareengineer">Software Engineer</option>
-                            <option value="else">else</option>
-                        </select>
-                        <span class="error-message" id="specialtyError"></span>
-                    </div>
-
-                    <div class="modal-actions">
-                        <button type="submit" class="btn btn-success" id="saveBtn">
-                            <i class="fas fa-save"></i>
-                            Submit
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="cancelBtn">
-                            <i class="fas fa-times"></i>
-                            Cancel
-                        </button>
-                    </div>
-
-                </form>
+            <div class="form-group">
+              <label for="userAge"><i class="fas fa-cake-candles"></i> Age *</label>
+              <input type="number" id="userAge" placeholder="18" min="10" max="120" />
+              <span class="error-message" id="ageError"></span>
             </div>
+          </div>
 
+          <div class="form-group">
+            <label for="userEmail"><i class="fas fa-envelope"></i> Email *</label>
+            <input type="email" id="userEmail" placeholder="example@email.com" autocomplete="email" />
+            <span class="error-message" id="emailError"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="userSpecialty"><i class="fas fa-briefcase"></i> Specialty *</label>
+              <select id="userSpecialty">
+                <option value="">Select specialty…</option>
+                <option value="webdeveloper">Web Developer</option>
+                <option value="back">Back-End</option>
+                <option value="front">Front-End</option>
+                <option value="knowhtml">FullStack</option>
+                <option value="softwareengineer">Software Engineer</option>
+                <option value="else">Other</option>
+              </select>
+              <span class="error-message" id="specialtyError"></span>
+            </div>
+            <div class="form-group">
+              <label for="userStatus"><i class="fas fa-circle-half-stroke"></i> Status</label>
+              <select id="userStatus">
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="userNotes"><i class="fas fa-sticky-note"></i> Notes</label>
+            <textarea id="userNotes" rows="2" placeholder="Optional notes about this user…" maxlength="200"></textarea>
+            <div class="notes-footer">
+              <span class="char-counter" id="charCounter">0/200</span>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveBtn">
+              <i class="fas fa-save"></i> Save User
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DELETE MODAL ──────────────────────────────── -->
+  <div class="modal hidden" id="deleteModal">
+    <div class="modal-overlay" id="deleteModalOverlay"></div>
+    <div class="modal-content" style="max-width:400px">
+      <div class="delete-modal-content">
+        <div class="delete-icon"><i class="fas fa-triangle-exclamation"></i></div>
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
+        <p style="margin-top:0.4rem;font-size:0.8rem;color:var(--danger)">This action cannot be undone.</p>
+        <div class="modal-actions" style="margin-top:1.5rem;padding-top:0;border:none">
+          <button class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+          <button class="btn btn-danger" id="confirmDeleteBtn">
+            <i class="fas fa-trash"></i> Delete
+          </button>
         </div>
+      </div>
     </div>
+  </div>
 
-    <div class="modal hidden" id="deleteModal">
-        <div class="modal-overlay" id="deleteModalOverlay"></div>
-        <div class="modal-content delete-modal-content">
-            
-            <div class="delete-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
+  <!-- ── PROFILE MODAL ─────────────────────────────── -->
+  <div class="modal hidden" id="profileModal">
+    <div class="modal-overlay" id="profileModalOverlay"></div>
+    <div class="modal-content profile-modal-content">
+      <div class="modal-header">
+        <h2>User Profile</h2>
+        <button class="close-btn" id="closeProfileBtn"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div id="profileContent"></div>
+    </div>
+  </div>
 
-            <h2>Confirm deletion</h2>
-            <p>Are you sure about deleting it?<strong id="deleteUserName"></strong>؟</p>
-            <div class="modal-actions">
-                <button class="btn btn-danger" id="confirmDeleteBtn">
-                    <i class="fas fa-trash"></i>
-                    Yes, delete
-                </button>
-                <button class="btn btn-secondary" id="cancelDeleteBtn">
-                    <i class="fas fa-times"></i>
-                    Cancel
-                </button>
-            </div>
 
+  <div class="modal hidden" id="shortcutsModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content shortcuts-modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-keyboard" style="color:var(--accent);margin-right:0.5rem"></i> Keyboard Shortcuts</h2>
+        <button class="close-btn" id="closeShortcuts"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="shortcuts-grid">
+          <div class="shortcut-item"><span>New User</span><kbd>Ctrl + N</kbd></div>
+          <div class="shortcut-item"><span>Search</span><kbd>Ctrl + F</kbd></div>
+          <div class="shortcut-item"><span>Export CSV</span><kbd>Ctrl + E</kbd></div>
+          <div class="shortcut-item"><span>Table View</span><kbd>1</kbd></div>
+          <div class="shortcut-item"><span>Card View</span><kbd>2</kbd></div>
+          <div class="shortcut-item"><span>Kanban View</span><kbd>3</kbd></div>
+          <div class="shortcut-item"><span>Close Modal</span><kbd>Esc</kbd></div>
+          <div class="shortcut-item"><span>This Panel</span><kbd>?</kbd></div>
+          <div class="shortcut-item"><span>Edit Row</span><kbd>Dbl Click</kbd></div>
+          <div class="shortcut-item"><span>Drag Rows</span><kbd>Drag & Drop</kbd></div>
         </div>
+      </div>
     </div>
-
-    <div class="toast hidde" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">The operation was completed successfully</span>
-    </div>
+  </div>
 
 
-    <div class="fab-menu">
-        <button class="fab-button" id="themeToggle" title="Toggle Theme">
-            <i class="fas fa-palette"></i>
-        </button>
-    </div>
+  <div class="toast" id="toast">
+    <i id="toastIcon" class="fas fa-circle-check"></i>
+    <span id="toastMessage">Done!</span>
+  </div>
 
-    <script src="main.js"></script>
+  <div class="scroll-top" id="scrollTop">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <script src="main.js"></script>
 
 </body>
 </html>
-
